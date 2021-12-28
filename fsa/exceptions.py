@@ -13,20 +13,19 @@ def catch_yaml_error(func):
     return wrapper
 
 
+def catch_os_error(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except OSError as err:
+            raise ParamsParsingError(err)
+    return wrapper
+
+
 class FiniteStateAutomataError(Exception):
     pass
 
 
 class ParamsParsingError(FiniteStateAutomataError):
     pass
-
-
-def catch_finite_state_automata_error(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except FiniteStateAutomataError as err:
-            message = str(err)
-            print(message)
-    return wrapper
