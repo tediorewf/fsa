@@ -1,0 +1,3 @@
+
+class FiniteStateAutomataError(Exception):
+    pass
