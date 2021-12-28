@@ -1,6 +1,9 @@
 from queue import Queue
 
-from . import const, exceptions, utils
+import yaml
+
+from . import const
+from .exceptions import FiniteStateAutomataError, catch_yaml_error
 
 
 class FiniteStateAutomata:
@@ -16,7 +19,10 @@ class FiniteStateAutomata:
         self.__starting_state = starting_state
         self.__final_states = final_states
 
-        self.__is_determined = False
+    @classmethod
+    def load_from_yaml(cls, filename: str) -> 'FiniteStateAutomata':
+        params = FiniteStateAutomata.__parse_params_from_yaml(filename)
+        return cls(**params)
 
     @property
     def states(self) -> 'set[str]':
@@ -38,23 +44,17 @@ class FiniteStateAutomata:
     def final_states(self) -> 'set[str]':
         return self.__final_states
 
-    @property
-    def is_determined(self) -> bool:
-        return self.__is_determined
-
-    @classmethod
-    def load_from_file(cls, filename: str):
-        states = set()
-        alphabet = set()
-        transitions = {}
-        starting_state = ''
-        final_states = set()
-        return cls(states, alphabet, transitions, starting_state, final_states)
+    def to_dict(self) -> dict:
+        d = {
+            const.STATES: self.states,
+            const.ALPHABET: self.alphabet,
+            const.TRANSITIONS: self.transitions,
+            const.STARTING_STATE: self.starting_state,
+            const.FINAL_STATES: self.final_states
+        }
+        return d
 
     def determine(self) -> None:
-        if self.is_determined:
-            return
-
         states = set()
         transitions = {}
         final_states = set()
@@ -92,16 +92,48 @@ class FiniteStateAutomata:
         self.__transitions = transitions
         self.__final_states = final_states
 
-        self.__is_determined = True
-
     @staticmethod
     def __set_to_state(states: 'set[str]') -> str:
-        return utils.replace_multiple(
-            base=str(states),
-            replaceables=const.SET_TO_STATE_REPLACEABLES,
-            replacement=const.SET_TO_STATE_REPLACEMENT,
-        )
+        return '{' + ', '.join(sorted(s for s in states)) + '}'
 
     @staticmethod
     def __state_to_set(state: str) -> 'set[str]':
         return {state}
+
+    @staticmethod
+    @catch_yaml_error
+    def __parse_params_from_yaml(filename: str) -> dict:
+        states: set = set()
+        alphabet: set = set()
+        transitions: 'dict[str, dict[str, set[str]]]' = {}
+        starting_state: str = ''
+        final_states: set = set()
+
+        with open(filename, 'r') as f:
+            data_loaded = yaml.safe_load(f)
+
+            for (state, payload) in data_loaded[const.TRANSITIONS].items():
+                state = str(state)
+                states.add(state)
+                transitions[state] = {}
+                for (symbol, transition_states) in payload.items():
+                    symbol = str(symbol)
+
+                    if symbol == const.STARTING:
+                        starting_state = state
+                    elif symbol == const.FINAL:
+                        final_states.add(state)
+                    else:
+                        alphabet.add(symbol)
+                        transition_states = set([str(i) for i in transition_states])
+                        transitions[state][symbol] = transition_states
+
+        params = {
+            const.STATES: states,
+            const.ALPHABET: alphabet,
+            const.TRANSITIONS: transitions,
+            const.STARTING_STATE: starting_state,
+            const.FINAL_STATES: final_states
+        }
+
+        return params

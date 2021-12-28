@@ -37,12 +37,10 @@ machine = fsa.FiniteStateAutomata(
     final_states=final_states,
 )
 
-machine.determine()
+print(machine)
 
-print(
-    machine.states,
-    machine.alphabet,
-    machine.transitions,
-    machine.starting_state,
-    machine.final_states,
-)
+machine = fsa.FiniteStateAutomata.load_from_yaml('./examples/fsa-non-det1.yaml')
+print(machine)
+
+machine.determine()
+print(machine.transitions)
