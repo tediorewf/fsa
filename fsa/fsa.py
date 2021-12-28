@@ -3,7 +3,7 @@ from queue import Queue
 import yaml
 
 from . import const
-from .exceptions import catch_os_error, catch_yaml_error
+from .exceptions import FiniteStateAutomataError, catch_os_error, catch_yaml_error
 
 
 class FiniteStateAutomata:
@@ -13,6 +13,14 @@ class FiniteStateAutomata:
                  transitions: 'dict[str, dict[str, set[str]]]',
                  starting_state: str,
                  final_states: 'set[str]'):
+        if starting_state not in states:
+            message = 'States do not contain starting state'
+            raise FiniteStateAutomataError(message)
+
+        if final_states.intersection(states) != final_states:
+            message = 'Final states do not included in all states'
+            raise FiniteStateAutomataError(message)
+
         self.__states = states
         self.__alphabet = alphabet
         self.__transitions = transitions
@@ -75,7 +83,7 @@ class FiniteStateAutomata:
 
             transitions[current_state] = {}
 
-            # Проходимся по каждому символу алфавита и добавляем в очередь группу состояний,
+            # Проходим по каждому символу алфавита и добавляем в очередь группу состояний,
             # которая может быть достигнута из состояний текущей группы.
             for symbol in self.alphabet:
                 next_group = set()
@@ -120,17 +128,19 @@ class FiniteStateAutomata:
                 state = str(state)
                 states.add(state)
                 transitions[state] = {}
-                for (symbol, transition_states) in payload.items():
-                    symbol = str(symbol)
+                for (token, item) in payload.items():
+                    token = str(token)
 
-                    if symbol == const.STARTING:
-                        starting_state = state
-                    elif symbol == const.FINAL:
-                        final_states.add(state)
+                    if token == const.STARTING and isinstance(item, bool):
+                        if item:
+                            starting_state = state
+                    elif token == const.FINAL and isinstance(item, bool):
+                        if item:
+                            final_states.add(state)
                     else:
-                        alphabet.add(symbol)
-                        transition_states = set([str(i) for i in transition_states])
-                        transitions[state][symbol] = transition_states
+                        alphabet.add(token)
+                        item = set([str(i) for i in item])
+                        transitions[state][token] = item
 
         params = {
             const.STATES: states,
