@@ -27,6 +27,8 @@ class FiniteStateAutomata:
         self.__starting_state = starting_state
         self.__final_states = final_states
 
+        self.__determined = False
+
     @classmethod
     def load_from_yaml(cls, filename: str) -> 'FiniteStateAutomata':
         params = FiniteStateAutomata.__parse_params_from_yaml(filename)
@@ -63,6 +65,9 @@ class FiniteStateAutomata:
         return d
 
     def determine(self) -> None:
+        if self.__determined:
+            return
+
         states = set()
         transitions = {}
         starting_group = {self.__starting_state}
@@ -102,6 +107,8 @@ class FiniteStateAutomata:
         self.__starting_state = starting_state
         self.__transitions = transitions
         self.__final_states = final_states
+
+        self.__determined = True
 
     @staticmethod
     def __set_to_state(states: 'set[str]') -> str:
