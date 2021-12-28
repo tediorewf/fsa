@@ -57,10 +57,12 @@ class FiniteStateAutomata:
     def determine(self) -> None:
         states = set()
         transitions = {}
+        starting_group = {self.__starting_state}
+        starting_state = FiniteStateAutomata.__set_to_state(starting_group)
         final_states = set()
 
         q = Queue()
-        q.put({self.starting_state})
+        q.put(starting_group)
 
         while not q.empty():
             group = q.get()
@@ -89,6 +91,7 @@ class FiniteStateAutomata:
                         q.put(next_group)
 
         self.__states = states
+        self.__starting_state = starting_state
         self.__transitions = transitions
         self.__final_states = final_states
 
