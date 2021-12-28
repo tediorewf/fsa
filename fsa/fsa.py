@@ -105,7 +105,8 @@ class FiniteStateAutomata:
 
     @staticmethod
     def __set_to_state(states: 'set[str]') -> str:
-        return '{' + ', '.join(sorted(s for s in states)) + '}'
+        state = '{' + ', '.join(sorted(s for s in states)) + '}'
+        return state
 
     @staticmethod
     def __state_to_set(state: str) -> 'set[str]':
