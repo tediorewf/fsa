@@ -1,5 +1,6 @@
 
 TRANSITIONS = 'transitions'
+MOVES = 'moves'
 STARTING = 'starting'
 FINAL = 'final'
 

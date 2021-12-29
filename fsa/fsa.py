@@ -3,7 +3,7 @@ from queue import Queue
 import yaml
 
 from . import const
-from .exceptions import FiniteStateAutomataError, catch_os_error, catch_yaml_error
+from .exceptions import FiniteStateAutomataError, catch_os_error, catch_yaml_error, ParamsParsingError
 
 
 class FiniteStateAutomata:
@@ -145,10 +145,11 @@ class FiniteStateAutomata:
                     elif token == const.FINAL and isinstance(item, bool):
                         if item:
                             final_states.add(state)
-                    else:
-                        alphabet.add(token)
-                        item = set([str(i) for i in item])
-                        transitions[state][token] = item
+                    elif token == const.MOVES:
+                        for (symbol, moves) in item.items():
+                            alphabet.add(symbol)
+                            moves = set([str(i) for i in moves])
+                            transitions[state][symbol] = moves
 
         params = {
             const.STATES: states,
