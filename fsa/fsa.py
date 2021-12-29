@@ -3,7 +3,7 @@ from queue import Queue
 import yaml
 
 from . import const
-from .exceptions import FiniteStateAutomataError, catch_os_error, catch_yaml_error, ParamsParsingError
+from .exceptions import FiniteStateAutomataError, catch_os_error, catch_yaml_error
 
 
 class FiniteStateAutomata:
