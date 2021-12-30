@@ -20,7 +20,9 @@ class FiniteStateAutomata:
         if final_states.intersection(states) != final_states:
             message = 'Final states do not included in all states'
             raise FiniteStateAutomataError(message)
-
+        
+        self.__ensure_transitions_valid(transitions)
+        
         self.__states = states
         self.__alphabet = alphabet
         self.__transitions = transitions
@@ -118,6 +120,10 @@ class FiniteStateAutomata:
     @staticmethod
     def __state_to_set(state: str) -> 'set[str]':
         return {state}
+
+    @staticmethod
+    def __ensure_transitions_valid(transitions: 'dict[str, dict[str, set[str]]]') -> None:
+        pass
 
     @staticmethod
     @catch_yaml_error
