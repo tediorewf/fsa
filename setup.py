@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='fsa',
@@ -7,7 +7,7 @@ setup(
     author='Mikhail Eremeev',
     author_email='meremeev@sfedu.ru',
     url='https://github.com/tediore-wf/fsa',
-    packages=['fsa'],
+    packages=find_packages(exclude=['tests']),
     python_requires='>=3.8',
     entry_points={
         'console_scripts': ['fsa=fsa.cli.main:main'],
