@@ -132,24 +132,11 @@ class FiniteStateAutomata:
         with open(filename, 'r') as f:
             data_loaded = yaml.safe_load(f)
 
-            for (state, payload) in data_loaded[const.TRANSITIONS].items():
-                state = str(state)
-                states.add(state)
-                transitions[state] = {}
-                for (token, item) in payload.items():
-                    token = str(token)
-
-                    if token == const.STARTING and isinstance(item, bool):
-                        if item:
-                            starting_state = state
-                    elif token == const.FINAL and isinstance(item, bool):
-                        if item:
-                            final_states.add(state)
-                    elif token == const.MOVES:
-                        for (symbol, moves) in item.items():
-                            alphabet.add(symbol)
-                            moves = set([str(i) for i in moves])
-                            transitions[state][symbol] = moves
+            states = FiniteStateAutomata.__parse_states(data_loaded)
+            alphabet = FiniteStateAutomata.__parse_alphabet(data_loaded)
+            transitions = FiniteStateAutomata.__parse_transitions(data_loaded)
+            starting_state = FiniteStateAutomata.__parse_starting_state(data_loaded)
+            final_states = FiniteStateAutomata.__parse_final_states(data_loaded)
 
         params = {
             const.STATES: states,
@@ -160,3 +147,37 @@ class FiniteStateAutomata:
         }
 
         return params
+
+    @staticmethod
+    def __parse_states(data_loaded: dict) -> 'set[str]':
+        states = set([str(state) for state in data_loaded[const.STATES]])
+        return states
+
+    @staticmethod
+    def __parse_alphabet(data_loaded: dict) -> 'set[str]':
+        alphabet = set([str(symbol) for symbol in data_loaded[const.ALPHABET]])
+        return alphabet
+    
+    @staticmethod
+    def __parse_transitions(data_loaded: dict) -> 'dict[str, dict[str, set[str]]]':
+        transitions = {}
+
+        for (state, transition) in data_loaded[const.TRANSITIONS].items():
+            state = str(state)
+            transitions[state] = {}
+
+            for (symbol, states) in transition.items():
+                states = set([str(state) for state in states])
+                transitions[state][symbol] = states
+
+        return transitions
+
+    @staticmethod
+    def __parse_starting_state(data_loaded: dict) -> str:
+        starting_state = str(data_loaded[const.STARTING_STATE])
+        return starting_state
+
+    @staticmethod
+    def __parse_final_states(data_loaded: dict) -> 'set[str]':
+        final_states = set([str(state) for state in data_loaded[const.FINAL_STATES]])
+        return final_states
