@@ -123,6 +123,7 @@ class FiniteStateAutomata:
 
     @staticmethod
     def __ensure_transitions_valid(transitions: 'dict[str, dict[str, set[str]]]') -> None:
+        # TODO: implement transitions validation
         pass
 
     @staticmethod
