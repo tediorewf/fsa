@@ -2,9 +2,11 @@
 
 # fsa
 
-Python package designed to determine non-deterministic [Finite-state machine](https://en.wikipedia.org/wiki/Finite-state_machine)
+Python package designed to work with [Finite-state machine](https://en.wikipedia.org/wiki/Finite-state_machine)
 
 ## Usage
+
+- Finite-state machine determinization:
 
 ```bash
 python3 -m fsa determine -f <filename>
