@@ -21,7 +21,7 @@ class FiniteStateAutomata:
             message = 'Final states do not included in all states'
             raise FiniteStateAutomataError(message)
         
-        self.__ensure_transitions_valid(transitions)
+        FiniteStateAutomata.__ensure_transitions_valid(transitions)
         
         self.__states = states
         self.__alphabet = alphabet
