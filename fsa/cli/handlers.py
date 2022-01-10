@@ -9,6 +9,5 @@ def catch_finite_state_automata_error(func):
         try:
             return func(*args, **kwargs)
         except FiniteStateAutomataError as err:
-            message = str(err)
-            print(message)
+            print(err)
     return wrapper
