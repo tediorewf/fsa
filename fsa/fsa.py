@@ -1,7 +1,7 @@
 import yaml
 
 from . import const
-from .exceptions import FiniteStateAutomataError, catch_os_error, catch_yaml_error
+from .exceptions import FiniteStateAutomataError, handle_os_error, handle_yaml_error
 
 
 class FiniteStateAutomata:
@@ -128,8 +128,8 @@ class FiniteStateAutomata:
         pass
 
     @staticmethod
-    @catch_yaml_error
-    @catch_os_error
+    @handle_yaml_error
+    @handle_os_error
     def __parse_params_from_yaml(filename: str) -> dict:
         states: set = set()
         alphabet: set = set()

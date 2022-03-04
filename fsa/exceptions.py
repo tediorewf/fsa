@@ -3,7 +3,7 @@ from functools import wraps
 from yaml import YAMLError
 
 
-def catch_yaml_error(func):
+def handle_yaml_error(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         try:
@@ -13,7 +13,7 @@ def catch_yaml_error(func):
     return wrapper
 
 
-def catch_os_error(func):
+def handle_os_error(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         try:
