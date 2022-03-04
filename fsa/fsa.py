@@ -31,6 +31,10 @@ class FiniteStateAutomata:
 
         self.__determined = False
 
+    def __str__(self) -> str:
+        fmt = FiniteStateAutomata.__format_fsa(self)
+        return fmt
+
     @classmethod
     def load_from_yaml(cls, filename: str) -> 'FiniteStateAutomata':
         params = FiniteStateAutomata.__parse_params_from_yaml(filename)
@@ -188,3 +192,13 @@ class FiniteStateAutomata:
     def __parse_final_states(data_loaded: dict) -> 'set[str]':
         final_states = set([str(state) for state in data_loaded[const.FINAL_STATES]])
         return final_states
+
+    @staticmethod
+    def __format_fsa(fsa: 'FiniteStateAutomata') -> str:
+        fmt = f'''
+states: {fsa.states}
+alphabet: {fsa.alphabet}
+transitions: {fsa.transitions}
+starting_state: {fsa.starting_state}
+final_states: {fsa.final_states}'''
+        return fmt
