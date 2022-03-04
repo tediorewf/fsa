@@ -1,5 +1,3 @@
-from queue import Queue
-
 import yaml
 
 from . import const
@@ -80,11 +78,10 @@ class FiniteStateAutomata:
         starting_state = FiniteStateAutomata.__set_to_state(starting_group)
         final_states = set()
 
-        q = Queue()
-        q.put(starting_group)
+        q = [starting_group]
 
-        while not q.empty():
-            group = q.get()
+        while not q:
+            group = q.pop()
             current_state = FiniteStateAutomata.__set_to_state(group)
             states.add(current_state)
 
@@ -107,7 +104,7 @@ class FiniteStateAutomata:
                     transitions[current_state][symbol] = FiniteStateAutomata.__state_to_set(next_state)
 
                     if next_state not in states:
-                        q.put(next_group)
+                        q.append(next_group)
 
         self.__states = states
         self.__starting_state = starting_state
