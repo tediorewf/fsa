@@ -80,7 +80,7 @@ class FiniteStateAutomata:
 
         q = [starting_group]
 
-        while not q:
+        while q:
             group = q.pop()
             current_state = FiniteStateAutomata.__set_to_state(group)
             states.add(current_state)
